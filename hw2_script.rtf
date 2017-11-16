@@ -1,0 +1,111 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1348\cocoasubrtf170
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\fs24 \cf0 Sub Total_Volume_Change_Bounds()\
+\
+         Dim ws As Worksheet\
+         \
+         For Each ws In Worksheets\
+            \
+            Dim Ticker As String\
+            Dim Ticker_Total As Double\
+            Dim Summary_Row As Double\
+            Dim Last_Row As Double\
+            Dim Last_Summary_Row As Double\
+            Dim Open_Price As Double\
+            Dim Close_Price As Double\
+            Dim i As Double\
+            Dim rng As Range\
+            Dim rng2 As Range\
+            Dim dblMin As Double\
+            Dim dblMax As Double\
+            Dim dblMax2 As Double\
+            Summary_Row = 2\
+            Last_Row = ws.Cells(Rows.Count, 1).End(xlUp).Row\
+    \
+            ws.Range("I1").Value = "Ticker"\
+            ws.Range("J1").Value = "Yearly Change"\
+            ws.Range("K1").Value = "Percent Change"\
+            ws.Range("L1").Value = "Total Stock Volume"\
+            ws.Range("O2").Value = "Greatest % Increase"\
+            ws.Range("O3").Value = "Greatest % Decrease"\
+            ws.Range("O4").Value = "Greatest Total Volume"\
+            ws.Range("P1").Value = "Ticker"\
+            ws.Range("Q1").Value = "Value"\
+    \
+            For i = 2 To Last_Row\
+    \
+                If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then\
+                    Ticker = ws.Cells(i, 1).Value\
+                    Ticker_Total = Ticker_Total + ws.Cells(i, 7).Value\
+                    ws.Range("I" & Summary_Row).Value = Ticker\
+                    ws.Range("L" & Summary_Row).Value = Ticker_Total\
+                    Close_Price = ws.Cells(i, 6).Value\
+                    ws.Range("J" & Summary_Row).Value = Close_Price\
+                    Summary_Row = Summary_Row + 1\
+                    Ticker_Total = 0\
+            \
+                Else\
+                    Ticker_Total = Ticker_Total + ws.Cells(i, 7).Value\
+            \
+                End If\
+                \
+            Next i\
+            \
+            Summary_Row = 2\
+            \
+            For i = 2 To Last_Row\
+            \
+                If ws.Cells(i - 1, 1).Value <> ws.Cells(i, 1).Value Then\
+                    ws.Cells(i, 3).NumberFormat = "0.00"\
+                    Open_Price = ws.Cells(i, 3).Value\
+                    ws.Range("K" & Summary_Row).Value = Open_Price\
+                    Summary_Row = Summary_Row + 1\
+                \
+                End If\
+            Next i\
+            \
+            For i = 2 To Last_Row\
+                While Not IsEmpty(ws.Cells(i, 10))\
+                ws.Cells(i, 10).Value = ws.Cells(i, 10).Value - ws.Cells(i, 11).Value\
+                If ws.Cells(i, 10).Value > 0 Then\
+                    ws.Cells(i, 10).Interior.ColorIndex = 4\
+                    Else\
+                    ws.Cells(i, 10).Interior.ColorIndex = 3\
+                    End If\
+                    If ws.Cells(i, 11).Value > 0 Then\
+                ws.Cells(i, 11).Value = ws.Cells(i, 10).Value / ws.Cells(i, 11).Value\
+                    End If\
+                ws.Cells(i, 11).NumberFormat = "0.00%"\
+                i = i + 1\
+                Wend\
+            Next i\
+            \
+            Set rng = ws.Range("K1:K100000")\
+            dblMin = Application.WorksheetFunction.Min(rng)\
+            ws.Range("Q3") = dblMin\
+            ws.Range("Q3").NumberFormat = "0.00%"\
+            dblMax = Application.WorksheetFunction.Max(rng)\
+            ws.Range("Q2") = dblMax\
+            ws.Range("Q2").NumberFormat = "0.00%"\
+            \
+            Set rng2 = ws.Range("L1:L100000")\
+            dblMax2 = Application.WorksheetFunction.Max(rng2)\
+            ws.Range("Q4") = dblMax2\
+            \
+            For i = 2 To Last_Row\
+                If ws.Cells(i, 12).Value = ws.Cells(4, 17).Value Then\
+                ws.Cells(4, 16).Value = ws.Cells(i, 9).Value\
+                ElseIf ws.Cells(i, 11).Value = ws.Cells(3, 17).Value Then\
+                ws.Cells(3, 16).Value = ws.Cells(i, 9).Value\
+                ElseIf ws.Cells(i, 11).Value = ws.Cells(2, 17).Value Then\
+                ws.Cells(2, 16).Value = ws.Cells(i, 9).Value\
+                \
+                End If\
+            Next i\
+         Next ws\
+         \
+End Sub}
